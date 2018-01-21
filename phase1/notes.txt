@@ -1,0 +1,16 @@
+lex -t lexer.l > lexer.cpp
+g++ -o scc lexer.cpp
+
+./scc < text.c > test.txt
+diff test.out text.txt
+
+Files should be in a folder named phase1
+tar and upload this folder                tar cvf phase1.tar phase1
+you must have a makefile
+
+%{ %option nounput noyywrap
+%}  yytext;
+do not use regex for comment
+check for keywords
+
+https://www.linux.com/learn/writing-simple-bash-script

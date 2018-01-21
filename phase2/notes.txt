@@ -1,0 +1,22 @@
+https://tinyurl.com/wi2018-175/
+password: coen175
+
+Modify lexical analysis
+    generate enum for tokens
+Disambiguate the grammar
+
+modify the Lexical Analyzer to return token
+"auto"  {return AUTO;}
+
+enum {
+    AUTO = 256,
+    BREAK,
+    CASE,
+    ...
+    ASSIGN,
+    ADD,
+    ...
+    OR,
+    AND,
+    ELLIPSIS
+};

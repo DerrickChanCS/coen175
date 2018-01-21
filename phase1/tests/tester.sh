@@ -1,0 +1,10 @@
+./scc < test00.c > test.txt && diff test00.out test.txt
+./scc < test01.c > test.txt && diff test01.out test.txt
+./scc < test02.c > test.txt && diff test02.out test.txt
+./scc < test03.c > test.txt && diff test03.out test.txt
+./scc < test04.c > test.txt && diff test04.out test.txt
+./scc < test05.c > test.txt && diff test05.out test.txt
+./scc < test06.c > test.txt && diff test06.out test.txt
+./scc < test07.c > test.txt && diff test07.out test.txt
+./scc < test08.c > test.txt && diff test08.out test.txt
+./scc < test09.c > test.txt && diff test09.out test.txt
