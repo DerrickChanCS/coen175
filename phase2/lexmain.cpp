@@ -44,28 +44,11 @@ void expr_identifier(){
 
 void expr_k(){
     expr_identifier();
-    /*
-    if(lookahead == LBRACKET){
+    while(lookahead == LBRACKET){
         match(LBRACKET);
-        
+        expr();
+        match(RBRACKET);
     }
-    */
-    /*
-    while(1){
-        if( lookahead == LBRACKET){
-            match(LBRACKET);
-            expr_or();
-        }
-        else if(lookahead == RBRACKET){
-            match(RBRACKET);
-            cout<<"index"<<endl;
-            break;
-        }
-        else{
-            break;
-        }
-    }
-    */
 }
 
 void expr_f(){
