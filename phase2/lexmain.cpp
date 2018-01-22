@@ -1,6 +1,7 @@
 # include <cctype>
 # include <iostream>
 # include "lexer.h"
+# include "lexfunctions.h"
 
 using namespace std;
 
@@ -12,15 +13,28 @@ void error(){
 }
 
 void match(int t){
-    if( t == lookahead)
+    if( t == lookahead){
         lookahead = yylex();
+        //cout<<yytext<<endl;
+    }
     else
         error();
+}
+
+void expressionList(){
 }
 
 void expr_identifier(){
     if( lookahead == IDENTIFIER){
         match(IDENTIFIER);
+        if( lookahead == LPAREN){
+            match(LPAREN);
+            if( lookahead == RPAREN){
+                match(RPAREN);
+            }else{
+                expressionList();
+            }
+        }
     }
     else if( lookahead == NUM){
         match(NUM);
@@ -46,33 +60,37 @@ void expr_k(){
     expr_identifier();
     while(lookahead == LBRACKET){
         match(LBRACKET);
-        expr();
+        expr_or();
         match(RBRACKET);
+        cout<<"index"<<endl;
     }
 }
 
 void expr_f(){
-    expr_k();
-    /*
     while(1){
         if( lookahead == ADDR){
             match(ADDR);
+            expr_f();
             cout<<"addr"<<endl;
         }
         else if( lookahead == MULTIPLY){
             match(MULTIPLY);
+            expr_f();
             cout<<"deref"<<endl;
         }
         else if( lookahead == NOT){
             match(NOT);
+            expr_f();
             cout<<"not"<<endl;
         }
         else if( lookahead == SUBTRACT){
             match(SUBTRACT);
+            expr_f();
             cout<<"neg"<<endl;
         }
         else if( lookahead == SIZEOF){
             match(SIZEOF);
+            expr_f();
             cout<<"sizeof"<<endl;
         }
         else{
@@ -80,7 +98,6 @@ void expr_f(){
         }
     }
     expr_k();
-    */
 }
 
 void expr_t(){
