@@ -31,34 +31,87 @@ void fgprime(){
     }
 }
 
-void functionGlobal(){
-    specifier();
+void translationUnit(){
+    functionGlobal();
+}
+
+void globalDeclaratorList(){
     pointers();
     match(IDENTIFIER);
     if( lookahead == LPAREN){
         match(LPAREN);
         parameters();
         match(RPAREN);
-        if( lookahead == LBRACE){
-            match(LBRACE);
-            declarations();
-            statements();
-            match(RBRACE);
-        } else {
-            fgprime();
-        }
     } else if( lookahead == LBRACKET){
         match(LBRACKET);
         match(NUM);
         match(RBRACKET);
-        fgprime();
-    } else{
-        fgprime();
+    }
+    
+    if( lookahead == COMMA){
+        match(COMMA);
+        globalDeclaratorList();
     }
 }
 
-void translationUnit(){
-    //if( lookahead ==
+/*
+ * tu  -> epsilon tu
+ *     |  specifier pointers id tu`
+ *
+ * tu` -> ; tu
+ *     |  [num] tu``
+ *     |  (params) tu```
+ *
+ * tu`` -> ; tu
+ *      |  , global-declarator-list; tu
+ *
+ * tu```-> ; tu
+ *     |  , global-declarator-list; tu
+ *     |  {declarations statements} tu
+ */
+void functionGlobal(){
+    while(1){
+        if( lookahead != INT &&
+            lookahead != CHAR &&
+            lookahead != VOID)
+            break;
+        specifier();
+        pointers();
+        match(IDENTIFIER);
+        if( lookahead == LPAREN){
+            match(LPAREN);
+            parameters();
+            match(RPAREN);
+            //tu```
+            if( lookahead == LBRACE){
+                match(LBRACE);
+                declarations();
+                statements();
+                match(RBRACE);
+            } else if( lookahead == SEMICOLON){
+                match(SEMICOLON);
+            } else if( lookahead == COMMA){
+                match(COMMA);
+                globalDeclaratorList();
+                match(SEMICOLON);
+            }
+        } else if( lookahead == LBRACKET){
+            match(LBRACKET);
+            match(NUM);
+            match(RBRACKET);
+            //tu``
+            if( lookahead == SEMICOLON){
+                match(SEMICOLON);
+            } else if( lookahead == COMMA){
+                match(COMMA);
+                globalDeclaratorList();
+                match(SEMICOLON);
+            }
+            
+        } else if( lookahead == SEMICOLON){
+            match(SEMICOLON);
+        }
+    }
 }
 
 void paramsPrime(){
@@ -70,7 +123,7 @@ void paramsPrime(){
         if(lookahead == ELLIPSIS){
             match(ELLIPSIS);
             //TODO Remove the cout
-            cout<<"ellipsis test"<<endl;
+            //cout<<"ellipsis test"<<endl;
             return;
         }
         //TODO check to see if you're supposed to call func
@@ -111,14 +164,18 @@ void parameter(){
 }
 
 void specifier(){
-    if(lookahead == INT)
+    if(lookahead == INT){
         match(INT);
-    else if( lookahead == CHAR)
+        //cout<<"match int in specifier"<<endl;
+    }
+    else if( lookahead == CHAR){
         match(CHAR);
-    else if( lookahead == VOID)
+        //cout<<"match char in specifier"<<endl;
+    }
+    else if( lookahead == VOID){
         match(VOID);
-    else
-        cout<<"err in specifier"<<endl;
+        //cout<<"match void in specifier"<<endl;
+    }
 }
 
 void declarations(){
@@ -131,6 +188,7 @@ void declarations(){
 void declaration(){
     specifier();
     declaratorList();
+    //cout<<"Declaration. Match semicolon"<<endl;
     match(SEMICOLON);
 }
 
@@ -151,6 +209,7 @@ void pointers(){
 
 void declarator(){
     pointers();
+    //cout<<"Identifier in declarator "<< yytext<<endl;
     match(IDENTIFIER);
     if( lookahead == LBRACKET){
         match(LBRACKET);
@@ -202,14 +261,17 @@ void statement(){
         }
     } else {
         assignment();
+        //cout<<"matching semicolon in statement"<<endl;
         match(SEMICOLON);
     }
 
 }
 
 void assignment(){
+    //cout<<"in assignment"<<endl;
     expr_or();
     if(lookahead == ASSIGN){
+        match(ASSIGN);
         expr_or();
     }
 }
@@ -431,7 +493,7 @@ int main()
     cout<<a+b-d*c<<endl;
     */
     while(lookahead != 0){
-        expr_or();
+        translationUnit();
     }
 
 }

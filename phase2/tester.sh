@@ -6,5 +6,5 @@ arrout=(./examples/*.out)
 
 for ((i=0; i<${#arrc[@]}; i++)); do
     echo "TESTING: ${arrc[$i]}"
-    ./scc < ${arrc[$i]} > test.txt && diff ${arrout[$i]} out.txt
+    ./scc < ${arrc[$i]} > temp.txt  && diff ${arrout[$i]} out.txt
 done

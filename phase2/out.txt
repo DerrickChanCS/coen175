@@ -1,7 +1,14 @@
+match int in specifier
+match int in specifier
+Identifier in declarator a
+Declaration. Match semicolon
+in assignment
+add
+matching semicolon in statement
+in assignment
+mul
+mul
+add
 deref
-deref
-deref
-deref
-deref
-deref
-deref
+add
+matching semicolon in statement

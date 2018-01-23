@@ -1,1 +1,5 @@
-
+int main(void){
+    int a;
+    a=a+b;
+    b=6+5*d*d+(*d);
+}
