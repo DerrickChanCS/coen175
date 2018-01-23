@@ -12,6 +12,8 @@ void error(){
 	cout << "There was an error" << endl;
 }
 
+void globalDeclarator(){}
+
 void match(int t){
     if( t == lookahead){
         lookahead = yylex();
@@ -21,7 +23,203 @@ void match(int t){
         error();
 }
 
+void fgprime(){
+    if( lookahead == SEMICOLON){
+        match(SEMICOLON);
+        globalDeclarator();
+        fgprime();
+    }
+}
+
+void functionGlobal(){
+    specifier();
+    pointers();
+    match(IDENTIFIER);
+    if( lookahead == LPAREN){
+        match(LPAREN);
+        parameters();
+        match(RPAREN);
+        if( lookahead == LBRACE){
+            match(LBRACE);
+            declarations();
+            statements();
+            match(RBRACE);
+        } else {
+            fgprime();
+        }
+    } else if( lookahead == LBRACKET){
+        match(LBRACKET);
+        match(NUM);
+        match(RBRACKET);
+        fgprime();
+    } else{
+        fgprime();
+    }
+}
+
+void translationUnit(){
+    //if( lookahead ==
+}
+
+void paramsPrime(){
+    if(lookahead == RPAREN){
+        //TODO Check if RPAREN is the proper terminator
+        return;
+    }else if( lookahead == COMMA){
+        match(COMMA);
+        if(lookahead == ELLIPSIS){
+            match(ELLIPSIS);
+            //TODO Remove the cout
+            cout<<"ellipsis test"<<endl;
+            return;
+        }
+        //TODO check to see if you're supposed to call func
+        parameters();
+    }
+}
+
+void parameters(){
+    if(lookahead == VOID){
+        match(VOID);
+        if(lookahead == RPAREN)
+            //TODO: check if RPAREN is the proper terminator
+            return;
+    }
+    else{
+        if(lookahead == CHAR){
+            match(CHAR);
+        } else if( lookahead == INT){
+            match(INT);
+        }
+        pointers();
+        paramsPrime();
+    }
+}
+
+void parameterList(){
+    parameter();
+    if(lookahead == COMMA){
+        match(COMMA);
+        parameterList();
+    }
+}
+
+void parameter(){
+    specifier();
+    pointers();
+    match(IDENTIFIER);
+}
+
+void specifier(){
+    if(lookahead == INT)
+        match(INT);
+    else if( lookahead == CHAR)
+        match(CHAR);
+    else if( lookahead == VOID)
+        match(VOID);
+    else
+        cout<<"err in specifier"<<endl;
+}
+
+void declarations(){
+    while(lookahead == INT  ||
+          lookahead == CHAR ||
+          lookahead == VOID)
+        declaration();
+}
+
+void declaration(){
+    specifier();
+    declaratorList();
+    match(SEMICOLON);
+}
+
+void declaratorList(){
+    declarator();
+    if( lookahead == COMMA){
+        match(COMMA);
+        declaratorList();
+    }
+}
+
+void pointers(){
+    if( lookahead == MULTIPLY){
+        match(MULTIPLY);
+        pointers();
+    }
+}
+
+void declarator(){
+    pointers();
+    match(IDENTIFIER);
+    if( lookahead == LBRACKET){
+        match(LBRACKET);
+        match(NUM);
+        match(RBRACKET);
+    }
+}
+
+void statements(){
+    while(lookahead != RBRACE)
+        statement();
+}
+
+void statement(){
+    if(lookahead == LBRACE){
+        declarations();
+        statements();
+    } else if( lookahead == BREAK){
+        match(BREAK);
+        match(SEMICOLON);
+    } else if( lookahead == RETURN){
+        match(RETURN);
+        expr_or();
+    } else if( lookahead == WHILE){
+        match(WHILE);
+        match(LPAREN);
+        expr_or();
+        match(RPAREN);
+        statement();
+    } else if( lookahead == FOR){
+        match(FOR);
+        match(LPAREN);
+        assignment();
+        match(SEMICOLON);
+        expr_or();
+        match(SEMICOLON);
+        assignment();
+        match(RPAREN);
+        statement();
+    } else if( lookahead == IF){
+        match(IF);
+        match(LPAREN);
+        expr_or();
+        match(RPAREN);
+        statement();
+        if( lookahead == ELSE){
+            match(ELSE);
+            statement();
+        }
+    } else {
+        assignment();
+        match(SEMICOLON);
+    }
+
+}
+
+void assignment(){
+    expr_or();
+    if(lookahead == ASSIGN){
+        expr_or();
+    }
+}
+
 void expressionList(){
+    expr_or();
+    if(lookahead == COMMA){
+         match(COMMA);
+         expressionList();
+    }
 }
 
 void expr_identifier(){
@@ -33,6 +231,7 @@ void expr_identifier(){
                 match(RPAREN);
             }else{
                 expressionList();
+                match(RPAREN);
             }
         }
     }
