@@ -1,14 +1,7 @@
-match int in specifier
-match int in specifier
-Identifier in declarator a
-Declaration. Match semicolon
-in assignment
-add
-matching semicolon in statement
-in assignment
+deref
 mul
-mul
-add
+neg
+not
 deref
 add
-matching semicolon in statement
+neq

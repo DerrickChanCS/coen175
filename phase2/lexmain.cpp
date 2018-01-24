@@ -78,8 +78,10 @@ void functionGlobal(){
         specifier();
         pointers();
         match(IDENTIFIER);
+        //cout<<"Done with specifier and pointers"<<endl;
         if( lookahead == LPAREN){
             match(LPAREN);
+            //cout<<"match lparen in fg"<<endl;
             parameters();
             match(RPAREN);
             //tu```
@@ -132,6 +134,28 @@ void paramsPrime(){
 }
 
 void parameters(){
+    if( lookahead == VOID){
+        match(VOID);
+        if( lookahead == RPAREN){
+            return;
+        }
+    } else if( lookahead == INT){
+        match(INT);
+    } else if( lookahead == CHAR){
+        match(CHAR);
+    }
+    //cout<<"match specifiers"<<endl;
+    pointers();
+    match(IDENTIFIER);
+    //cout<<"done matching identifiers in parameters"<<endl;
+    paramsPrime();
+    /*
+    if( lookahead == COMMA){
+        match(COMMA);
+        parameters();
+    }
+    */
+    /*
     if(lookahead == VOID){
         match(VOID);
         if(lookahead == RPAREN)
@@ -147,6 +171,25 @@ void parameters(){
         pointers();
         paramsPrime();
     }
+    */
+}
+/*
+void parameterList(){
+    parameter();
+    if(lookahead == COMMA){
+        if(lookahead == RPAREN)
+            //TODO: check if RPAREN is the proper terminator
+            return;
+    }
+    else{
+        if(lookahead == CHAR){
+            match(CHAR);
+        } else if( lookahead == INT){
+            match(INT);
+        }
+    }
+    pointers();
+    paramsPrime();
 }
 
 void parameterList(){
@@ -156,6 +199,9 @@ void parameterList(){
         parameterList();
     }
 }
+*/
+
+void parameterList(){}
 
 void parameter(){
     specifier();
@@ -305,16 +351,11 @@ void expr_identifier(){
     }
     else if( lookahead == CHARACTER){
         match(CHARACTER);
-    }
-    else if( lookahead == LPAREN){
+    }else if( lookahead == LPAREN){
         match(LPAREN);
         expr_or();
         match(RPAREN);
     }
-    else{
-        return;
-    }
-    //need ID(OR) and ID()
 }
 
 void expr_k(){
@@ -334,6 +375,8 @@ void expr_f(){
             expr_f();
             cout<<"addr"<<endl;
         }
+        //TODO fix precedence issue.
+        // Multiply sometime being treated as deref
         else if( lookahead == MULTIPLY){
             match(MULTIPLY);
             expr_f();
