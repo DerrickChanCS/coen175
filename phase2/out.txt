@@ -1,7 +1,15 @@
-deref
+ltn
+add
+add
+eql
+rem
+geq
+ltn
+add
 mul
+add
 neg
 not
-deref
+mul
 add
 neq

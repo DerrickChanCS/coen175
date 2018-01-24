@@ -1,17 +1,23 @@
-/* sum.c */
+/* params.c */
 
-int printf(char *s, ...);
+int foo(int x, int y), bar(void *p, int x, ...);
 
-int main(void)
+int foo(int x, int y)
 {
-    int i, n, the_sum;
-
-    i = 0;
-    the_sum = 0;
-    n = 10;
-
-    for (i = 1; i <= n; i = i + 1)
-	the_sum = the_sum + i;
-
-    printf("%d %d\n", the_sum, n * (n + 1) / 2);
+    int a;
+    int x;
+    int i;
+    for(i = 0; i < 10; i=i+1){
+        x = x + 1;
+    }
+    if(x == 1){
+        return x % 5;
+    }
+    while(x>=1){
+        for(i = 0; i<10; i=1+i){
+            a = i;
+        }
+    }
+    a = b + d * x;
+    return -x + !y * 10 != 3;
 }

@@ -257,6 +257,7 @@ void declarator(){
     pointers();
     //cout<<"Identifier in declarator "<< yytext<<endl;
     match(IDENTIFIER);
+    
     if( lookahead == LBRACKET){
         match(LBRACKET);
         match(NUM);
@@ -271,8 +272,11 @@ void statements(){
 
 void statement(){
     if(lookahead == LBRACE){
+        match(LBRACE);
         declarations();
+        //cout<<"done declarations in statement"<<endl;
         statements();
+        match(RBRACE);
     } else if( lookahead == BREAK){
         match(BREAK);
         match(SEMICOLON);
@@ -289,6 +293,7 @@ void statement(){
         match(FOR);
         match(LPAREN);
         assignment();
+        //cout<<"Done assignment"<<endl;
         match(SEMICOLON);
         expr_or();
         match(SEMICOLON);
@@ -313,6 +318,10 @@ void statement(){
 
 }
 
+/*
+ *  assignment -> expression=expression
+ *             |  expression
+ */
 void assignment(){
     //cout<<"in assignment"<<endl;
     expr_or();
@@ -369,39 +378,36 @@ void expr_k(){
 }
 
 void expr_f(){
-    while(1){
-        if( lookahead == ADDR){
-            match(ADDR);
-            expr_f();
-            cout<<"addr"<<endl;
-        }
-        //TODO fix precedence issue.
-        // Multiply sometime being treated as deref
-        else if( lookahead == MULTIPLY){
-            match(MULTIPLY);
-            expr_f();
-            cout<<"deref"<<endl;
-        }
-        else if( lookahead == NOT){
-            match(NOT);
-            expr_f();
-            cout<<"not"<<endl;
-        }
-        else if( lookahead == SUBTRACT){
-            match(SUBTRACT);
-            expr_f();
-            cout<<"neg"<<endl;
-        }
-        else if( lookahead == SIZEOF){
-            match(SIZEOF);
-            expr_f();
-            cout<<"sizeof"<<endl;
-        }
-        else{
-            break;
-        }
+    if( lookahead == ADDR){
+        match(ADDR);
+        expr_f();
+        cout<<"addr"<<endl;
     }
-    expr_k();
+    //TODO fix precedence issue.
+    // Multiply sometime being treated as deref
+    else if( lookahead == MULTIPLY){
+        match(MULTIPLY);
+        expr_f();
+        cout<<"deref"<<endl;
+    }
+    else if( lookahead == NOT){
+        match(NOT);
+        expr_f();
+        cout<<"not"<<endl;
+    }
+    else if( lookahead == SUBTRACT){
+        match(SUBTRACT);
+        expr_f();
+        cout<<"neg"<<endl;
+    }
+    else if( lookahead == SIZEOF){
+        match(SIZEOF);
+        expr_f();
+        cout<<"sizeof"<<endl;
+    }
+    else{
+        expr_k();
+    }
 }
 
 void expr_t(){
@@ -509,6 +515,9 @@ void expr_and(){
     }
 }
 
+/*
+ *
+ */
 void expr_or(){
     expr_and();
     while(1){
