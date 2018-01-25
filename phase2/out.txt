@@ -6,6 +6,8 @@ rem
 geq
 ltn
 add
+eql
+eql
 mul
 add
 neg
@@ -13,3 +15,5 @@ not
 mul
 add
 neq
+add
+add

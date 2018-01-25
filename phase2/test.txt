@@ -18,6 +18,19 @@ int foo(int x, int y)
             a = i;
         }
     }
+    if(x==1){
+        if(y==1){
+            x = 2;
+        } else
+            y = 2;
+    }
     a = b + d * x;
     return -x + !y * 10 != 3;
+}
+
+int main(void){
+    int a,x,y,z,a;
+    int b;
+    a = 1 + 2;
+    b = 3 + 2;
 }

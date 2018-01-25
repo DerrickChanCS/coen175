@@ -116,6 +116,11 @@ void functionGlobal(){
     }
 }
 
+/*
+ * paramsPrime -> epsilon
+ *             |  , parameters
+ *             |  , ...
+ */
 void paramsPrime(){
     if(lookahead == RPAREN){
         //TODO Check if RPAREN is the proper terminator
@@ -133,6 +138,15 @@ void paramsPrime(){
     }
 }
 
+/*
+ * parameters -> void
+ *            |  parameter_list()
+ * parameters is left factored
+ *      -> void
+ *      |  int pointers parms`
+ *      |  char pointers parms`
+ *      |  void pointers parms`
+ */
 void parameters(){
     if( lookahead == VOID){
         match(VOID);
@@ -149,66 +163,24 @@ void parameters(){
     match(IDENTIFIER);
     //cout<<"done matching identifiers in parameters"<<endl;
     paramsPrime();
-    /*
-    if( lookahead == COMMA){
-        match(COMMA);
-        parameters();
-    }
-    */
-    /*
-    if(lookahead == VOID){
-        match(VOID);
-        if(lookahead == RPAREN)
-            //TODO: check if RPAREN is the proper terminator
-            return;
-    }
-    else{
-        if(lookahead == CHAR){
-            match(CHAR);
-        } else if( lookahead == INT){
-            match(INT);
-        }
-        pointers();
-        paramsPrime();
-    }
-    */
 }
+
+void parameter_list(){}
+
 /*
-void parameterList(){
-    parameter();
-    if(lookahead == COMMA){
-        if(lookahead == RPAREN)
-            //TODO: check if RPAREN is the proper terminator
-            return;
-    }
-    else{
-        if(lookahead == CHAR){
-            match(CHAR);
-        } else if( lookahead == INT){
-            match(INT);
-        }
-    }
-    pointers();
-    paramsPrime();
-}
-
-void parameterList(){
-    parameter();
-    if(lookahead == COMMA){
-        match(COMMA);
-        parameterList();
-    }
-}
-*/
-
-void parameterList(){}
-
+ * parameter -> specifier pointers id
+ */
 void parameter(){
     specifier();
     pointers();
     match(IDENTIFIER);
 }
 
+/*
+ * specifier -> int
+ *           |  char
+ *           |  void
+ */
 void specifier(){
     if(lookahead == INT){
         match(INT);
@@ -224,6 +196,10 @@ void specifier(){
     }
 }
 
+/*
+ * declarations -> epsilon
+ *              |  declaration declarations
+ */
 void declarations(){
     while(lookahead == INT  ||
           lookahead == CHAR ||
@@ -231,21 +207,32 @@ void declarations(){
         declaration();
 }
 
+/*
+ * declaration -> specifier declaratior_list ;
+ */
 void declaration(){
     specifier();
-    declaratorList();
+    declarator_list();
     //cout<<"Declaration. Match semicolon"<<endl;
     match(SEMICOLON);
 }
 
-void declaratorList(){
+/* 
+ * declarator_list -> declarator
+ *                 |  declarator , declarator_list
+ */
+void declarator_list(){
     declarator();
     if( lookahead == COMMA){
         match(COMMA);
-        declaratorList();
+        declarator_list();
     }
 }
 
+/*
+ * pointers -> epsilon
+ *          |  * pointers
+ */
 void pointers(){
     if( lookahead == MULTIPLY){
         match(MULTIPLY);
@@ -253,6 +240,10 @@ void pointers(){
     }
 }
 
+/*
+ * declarator -> pointers id
+ *            |  pointers id [ num ]
+ */
 void declarator(){
     pointers();
     //cout<<"Identifier in declarator "<< yytext<<endl;
@@ -265,11 +256,25 @@ void declarator(){
     }
 }
 
+/*
+ * statements -> epsilon
+ *            |  statement statements
+ */
 void statements(){
     while(lookahead != RBRACE)
         statement();
 }
 
+/*
+ * statement -> {declarations statements}
+ *           |  break;
+ *           |  return expression;
+ *           |  while ( expression) statement
+ *           |  for(assignment;expression;assignment) statement
+ *           |  if(expression) statement
+ *           |  if(expression) statement else statement
+ *           |  assignment ;
+ */
 void statement(){
     if(lookahead == LBRACE){
         match(LBRACE);
@@ -331,14 +336,27 @@ void assignment(){
     }
 }
 
-void expressionList(){
+/*
+ * expression_list -> expression
+ *                 |  expression , expression_list
+ */
+void expression_list(){
     expr_or();
     if(lookahead == COMMA){
          match(COMMA);
-         expressionList();
+         expression_list();
     }
 }
 
+/*
+ * expr_identifier -> id ( expression_list)
+ *                 |  id ()
+ *                 |  id
+ *                 |  num
+ *                 |  string
+ *                 |  character
+ *                 |  ( expr_or )
+ */
 void expr_identifier(){
     if( lookahead == IDENTIFIER){
         match(IDENTIFIER);
@@ -347,7 +365,7 @@ void expr_identifier(){
             if( lookahead == RPAREN){
                 match(RPAREN);
             }else{
-                expressionList();
+                expression_list();
                 match(RPAREN);
             }
         }
@@ -367,7 +385,12 @@ void expr_identifier(){
     }
 }
 
-void expr_k(){
+/*
+ *  Left associative; Left recursive
+ *  expr_post -> expr_post[expr_or]
+ *            |  expr_identifier
+ */
+void expr_post(){
     expr_identifier();
     while(lookahead == LBRACKET){
         match(LBRACKET);
@@ -377,55 +400,71 @@ void expr_k(){
     }
 }
 
-void expr_f(){
+/*
+ *  Right associative; Right Associative
+ *  expr_pre -> &expr_post
+ *           |  *expr_post
+ *           |  !expr_post
+ *           |  -expr_post
+ *           |  sizeof expr_post
+ *           |  expr_post
+ */
+void expr_pre(){
     if( lookahead == ADDR){
         match(ADDR);
-        expr_f();
+        expr_pre();
         cout<<"addr"<<endl;
     }
     //TODO fix precedence issue.
     // Multiply sometime being treated as deref
     else if( lookahead == MULTIPLY){
         match(MULTIPLY);
-        expr_f();
+        expr_pre();
         cout<<"deref"<<endl;
     }
     else if( lookahead == NOT){
         match(NOT);
-        expr_f();
+        expr_pre();
         cout<<"not"<<endl;
     }
     else if( lookahead == SUBTRACT){
         match(SUBTRACT);
-        expr_f();
+        expr_pre();
         cout<<"neg"<<endl;
     }
     else if( lookahead == SIZEOF){
         match(SIZEOF);
-        expr_f();
+        expr_pre();
         cout<<"sizeof"<<endl;
     }
     else{
-        expr_k();
+        expr_post();
     }
 }
 
-void expr_t(){
-    expr_f();
+/*
+ *  Left associative; Left recursive
+ *  expr_mul -> expr_mul * expr_pre
+ *           |  expr_mul / expr_pre
+ *           |  expr_mul % expr_pre
+ *           |  expr_pre
+ */
+void expr_mul(){
+    expr_pre();
     while(1){
         if( lookahead == MULTIPLY){
             match(MULTIPLY);
-            expr_f();
+            expr_pre();
             cout<<"mul"<<endl;
         }
         else if( lookahead == DIVIDE){
             match(DIVIDE);
-            expr_f();
+            expr_pre();
             cout<<"div"<<endl;
         }
         else if( lookahead == MODULO){
             match(MODULO);
-            expr_f();
+            expr_pre();
             cout<<"rem"<<endl;
         }
         else{
@@ -434,17 +473,23 @@ void expr_t(){
     }
 }
 
-void expr_e(){
-    expr_t();
+/*
+ *  Left associative; Left recursive
+ *  expr_add -> expr_add + expr_mul
+ *           |  expr_add - expr_mul
+ *           |  expr_mul
+ */
+void expr_add(){
+    expr_mul();
     while(1){
         if( lookahead == ADD){
             match(ADD);
-            expr_t();
+            expr_mul();
             cout<<"add"<<endl;
         }
         else if( lookahead == SUBTRACT){
             match(SUBTRACT);
-            expr_t();
+            expr_mul();
             cout<<"sub"<<endl;
         }
         else{
@@ -453,27 +498,35 @@ void expr_e(){
     }
 }
 
+/*
+ *  Left associative; Left recursive
+ *  expr_cmp -> expr_cmp <  expr_add
+ *           |  expr_cmp >  expr_add
+ *           |  expr_cmp <= expr_add
+ *           |  expr_cmp >= expr_add
+ *           |  expr_add
+ */
 void expr_cmp(){
-    expr_e();
+    expr_add();
     while(1){
         if( lookahead == LESS){
             match(LESS);
-            expr_e();
+            expr_add();
             cout<<"ltn"<<endl;
         }
         else if( lookahead == GREATER){
             match(GREATER);
-            expr_e();
+            expr_add();
             cout<<"gtn"<<endl;
         }
         else if( lookahead == LESSEQUAL){
             match(LESSEQUAL);
-            expr_e();
+            expr_add();
             cout<<"leq"<<endl;
         }
         else if( lookahead == GREATEREQUAL){
             match(GREATEREQUAL);
-            expr_e();
+            expr_add();
             cout<<"geq"<<endl;
         }
         else{
@@ -482,6 +535,12 @@ void expr_cmp(){
     }
 }
 
+/*
+ *  Left associative; Left recursive
+ *  expr_eq -> expr_eq == expr_cmp
+ *          |  expr_eq != expr_cmp
+ *          |  expr_cmp
+ */
 void expr_eq(){
     expr_cmp();
     while(1){
@@ -501,6 +560,11 @@ void expr_eq(){
     }
 }
 
+/*
+ *  Left associative; Left recursive
+ *  expr_and -> expr_and && expr_eq
+ *           |  expr_eq
+ */
 void expr_and(){
     expr_eq();
     while(1){
@@ -516,7 +580,9 @@ void expr_and(){
 }
 
 /*
- *
+ *  Left associative; Left recursive
+ *  expr_or -> expr_or || expr_and
+ *          |  expr_and
  */
 void expr_or(){
     expr_and();
