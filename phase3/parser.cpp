@@ -10,6 +10,7 @@
 # include <iostream>
 # include "tokens.h"
 # include "lexer.h"
+# include <string>
 
 using namespace std;
 
@@ -27,9 +28,9 @@ static void statement();
 static void error()
 {
     if (lookahead == DONE)
-	report("syntax error at end of file");
+	    report("syntax error at end of file");
     else
-	report("syntax error at '%s'", yytext);
+	    report("syntax error at '%s'", yytext);
 
     exit(EXIT_FAILURE);
 }
@@ -46,7 +47,7 @@ static void error()
 static void match(int t)
 {
     if (lookahead != t)
-	error();
+	    error();
 
     lookahead = yylex();
 }
@@ -60,6 +61,8 @@ static void match(int t)
 
 static bool isSpecifier(int token)
 {
+    //cout<<"specifier token "<< token<< endl;
+    //cout<<"ENUM int is: "<<INT<<endl;
     return token == INT || token == CHAR || token == VOID;
 }
 
@@ -76,12 +79,21 @@ static bool isSpecifier(int token)
  *		  void
  */
 
-static void specifier()
+static int specifier()
 {
-    if (isSpecifier(lookahead))
-	match(lookahead);
-    else
-	error();
+    int type = 0;
+    //cout<<"In specifier"<<endl;
+    if (isSpecifier(lookahead)){
+        //cout<<type<<endl;
+        type = lookahead;
+	    match(lookahead);
+        return type;
+    }
+    else{
+        cout<<lookahead<<endl;
+	    error();
+        return -1;
+    }
 }
 
 
@@ -95,10 +107,14 @@ static void specifier()
  *		  * pointers
  */
 
-static void pointers()
+static unsigned pointers()
 {
-    while (lookahead == '*')
-	match('*');
+    unsigned count = 0;
+    while (lookahead == '*'){
+	    match('*');
+        count++;
+    }
+    return count;
 }
 
 
@@ -113,15 +129,21 @@ static void pointers()
  *		  pointers identifier [ num ]
  */
 
-static void declarator()
+static void declarator(int typespec)
 {
-    pointers();
+    char *ptr;
+    unsigned indirection = pointers();
+    string id = yytext;
     match(ID);
 
     if (lookahead == '[') {
-	match('[');
-	match(NUM);
-	match(']');
+        match('[');
+        unsigned len = strtoul(yytext,&ptr,0);
+        match(NUM);
+        match(']');
+        cout<<"Typespec: "<<typespec<<"Indirection: "<<indirection<<" ID: "<<id<<"length: "<<len<<endl;
+    } else{
+        cout<<"Typespec: "<<typespec<<"Indirection: "<<indirection<<" ID: "<<id<<endl;
     }
 }
 
@@ -143,12 +165,12 @@ static void declarator()
 
 static void declaration()
 {
-    specifier();
-    declarator();
+    int type = specifier();
+    declarator(type);
 
     while (lookahead == ',') {
-	match(',');
-	declarator();
+        match(',');
+        declarator(type);
     }
 
     match(';');
@@ -776,9 +798,16 @@ static void topLevelDeclaration()
 int main()
 {
     lookahead = yylex();
+    cout<<"Open global scope"<<endl;
+   // cout<<yytext<<endl;
+  //  cout<<"lookahead at beginnign: "<<lookahead<<endl;
+ //   cout<<"OR: "<<OR<<endl;
+//    cout<<"DOT: "<<DOT<<endl;
 
     while (lookahead != DONE)
-	topLevelDeclaration();
+	    topLevelDeclaration();
+
+    cout<<"Close global scope"<<endl;
 
     exit(EXIT_SUCCESS);
 }
