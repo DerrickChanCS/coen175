@@ -4,16 +4,31 @@
 Symbol::Symbol(const Type &t, std::string name){
     _type = new Type(t);
     _name = name;
+    defined = false;
 }
 
 Symbol::Symbol(const Type &t, const char* name){
     _type = new Type(t);
     _name = name;
+    defined = false;
+}
+
+Symbol::Symbol(const Type &t, std::string name, bool def){
+    _type = new Type(t);
+    _name = name;
+    defined = def;
+}
+
+Symbol::Symbol(const Type &t, const char* name, bool def){
+    _type = new Type(t);
+    _name = name;
+    isDefined = def;
 }
 
 Symbol::Symbol(const Symbol &t){
     _type = new Type(*(t.getType()));
     _name = t.getName();
+    isDefined = t.isDefined;
 }
 
 Type* Symbol::getType() const{
@@ -35,4 +50,12 @@ bool Symbol::operator==(const Symbol &rhs) const{
 }
 bool Symbol::operator!=(const Symbol &rhs) const{
     return !operator==(rhs);
+}
+
+bool Symbol::isDefined() const{
+    return defined;
+}
+
+void Symbol::setDefine(bool in){
+    defined = in;
 }

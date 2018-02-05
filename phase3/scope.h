@@ -1,6 +1,7 @@
 #ifndef SCOPE_H
 #define SCOPE_H
 #include "symbol.h"
+#include <ostream>
 
 typedef std::vector<Symbol *> Symbols;
 class Scope{
@@ -13,7 +14,9 @@ public:
     Symbol *find(const string &name) const;
     Symbol *lookup(const string &name) const;
     Scope *enclosing() const;
-    const Symbols& symbols() const;
+    Symbols* symbols() const;
 };
+
+std::ostream &operator<<(std::ostream &ostr, const Scope &scope);
 
 #endif

@@ -43,6 +43,16 @@ Scope *Scope::enclosing() const{
     return _enclosing;
 }
 
-const Symbols &Scope::symbols() const{
-    return *_symbols;
+Symbols* Scope::symbols() const{
+    return _symbols;
+}
+
+std::ostream &operator<<(std::ostream &ostr, const Scope& scope){
+    Symbols* symb = (scope).symbols();
+    for(Symbols::size_type i = 0; i < symb->size(); i++){
+        ostr<< *((*symb)[i]->getType())<<" "<<((*symb)[i])->getName();
+        if( i != symb->size() -1)
+            ostr<<std::endl;
+    }
+    return ostr;
 }

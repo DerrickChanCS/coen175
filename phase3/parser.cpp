@@ -11,12 +11,19 @@
 # include "tokens.h"
 # include "lexer.h"
 # include <string>
+# include "scope.h"
+# include <vector>
 
 using namespace std;
 
 static int lookahead;
 static void expression();
 static void statement();
+
+static Scope* currentScope;
+
+typedef std::vector<Symbol *> Symbols;
+typedef std::vector<Type> Types;
 
 
 /*
@@ -141,9 +148,13 @@ static void declarator(int typespec)
         unsigned len = strtoul(yytext,&ptr,0);
         match(NUM);
         match(']');
-        cout<<"Typespec: "<<typespec<<"Indirection: "<<indirection<<" ID: "<<id<<"length: "<<len<<endl;
+        cout<<"Typespec: "<<typespec<<" Indirection: "<<indirection<<" ID: "<<id<<" length: "<<len<<endl;
     } else{
-        cout<<"Typespec: "<<typespec<<"Indirection: "<<indirection<<" ID: "<<id<<endl;
+        Type *t = new Type(typespec, indirection);
+        Symbol *s = new Symbol(*t, id);
+        cout<<"current scope "<<currentScope<<endl;
+        (*currentScope).insert(s);
+        //cout<<"Typespec: "<<typespec<<"Indirection: "<<indirection<<" ID: "<<id<<endl;
     }
 }
 
@@ -190,7 +201,7 @@ static void declaration()
 static void declarations()
 {
     while (isSpecifier(lookahead))
-	declaration();
+        declaration();
 }
 
 
@@ -534,7 +545,7 @@ static void expression()
 static void statements()
 {
     while (lookahead != '}')
-	statement();
+        statement();
 }
 
 
@@ -553,8 +564,8 @@ static void assignment()
     expression();
 
     if (lookahead == '=') {
-	match('=');
-	expression();
+        match('=');
+        expression();
     }
 }
 
@@ -579,53 +590,53 @@ static void assignment()
 static void statement()
 {
     if (lookahead == '{') {
-	match('{');
-	declarations();
-	statements();
-	match('}');
+        match('{');
+        declarations();
+        statements();
+        match('}');
 
     } else if (lookahead == BREAK) {
-	match(BREAK);
-	match(';');
+        match(BREAK);
+        match(';');
 
     } else if (lookahead == RETURN) {
-	match(RETURN);
-	expression();
-	match(';');
+        match(RETURN);
+        expression();
+        match(';');
 
     } else if (lookahead == WHILE) {
-	match(WHILE);
-	match('(');
-	expression();
-	match(')');
-	statement();
+        match(WHILE);
+        match('(');
+        expression();
+        match(')');
+        statement();
 
     } else if (lookahead == FOR) {
-	match(FOR);
-	match('(');
-	assignment();
-	match(';');
-	expression();
-	match(';');
-	assignment();
-	match(')');
-	statement();
+        match(FOR);
+        match('(');
+        assignment();
+        match(';');
+        expression();
+        match(';');
+        assignment();
+        match(')');
+        statement();
 
     } else if (lookahead == IF) {
-	match(IF);
-	match('(');
-	expression();
-	match(')');
-	statement();
+        match(IF);
+        match('(');
+        expression();
+        match(')');
+        statement();
 
-	if (lookahead == ELSE) {
-	    match(ELSE);
-	    statement();
-	}
+        if (lookahead == ELSE) {
+            match(ELSE);
+            statement();
+        }
 
     } else {
-	assignment();
-	match(';');
+        assignment();
+        match(';');
     }
 }
 
@@ -640,11 +651,16 @@ static void statement()
  *		  specifier pointers identifier
  */
 
-static void parameter()
+static Symbol* parameter()
 {
-    specifier();
-    pointers();
+    int s = specifier();
+    int p = pointers();
+    std::string name = yytext;
     match(ID);
+    Type *t = new Type(s,p);
+    //(*currentScope)->insert(new Symbol(*t,name));
+    //return *t;
+    return new Symbol(*t, name);
 }
 
 
@@ -666,30 +682,48 @@ static void parameter()
  *		  , parameter remaining-parameters
  */
 
-static void parameters()
+static Symbols* parameters()
 {
+    int s;
+    //Parameters* params = new Parameters();
+    Symbols* functionSymbols = new Symbols();
     if (lookahead == VOID) {
-	match(VOID);
+	    match(VOID);
 
 	if (lookahead == ')')
-	    return;
-
+        //if the function has void params return empty symbol vector
+	    return functionSymbols;
     } else
-	specifier();
+	    s = specifier();
 
-    pointers();
+    int p = pointers();
+    std::string name = yytext;
     match(ID);
+    
+    Type *t = new Type(s,p);
+    Symbol* temp = new Symbol(*t, name);
+    
+    //params->push_back(t);
+    functionSymbols->push_back(temp);
 
     while (lookahead == ',') {
-	match(',');
+        match(',');
 
-	if (lookahead == ELLIPSIS) {
-	    match(ELLIPSIS);
-	    break;
-	}
+        if (lookahead == ELLIPSIS) {
+            //create a new type and name to match the ellipsis
+            match(ELLIPSIS);
+            t = new Type(ELLIPSIS);
+            name = "";
+            temp = new Symbol(*t, name);
+            functionSymbols->push_back(temp);
+            //params->push_back(parameter());
+            break;
+        }
 
-	parameter();
+        functionSymbols->push_back(parameter());
+       // params->push_back(parameter());
     }
+    return functionSymbols;
 }
 
 
@@ -712,14 +746,14 @@ static void globalDeclarator()
     match(ID);
 
     if (lookahead == '[') {
-	match('[');
-	match(NUM);
-	match(']');
+        match('[');
+        match(NUM);
+        match(']');
 
     } else if (lookahead == '(') {
-	match('(');
-	parameters();
-	match(')');
+        match('(');
+        parameters();
+        match(')');
     }
 }
 
@@ -759,33 +793,73 @@ static void remainingDeclarators()
 
 static void topLevelDeclaration()
 {
-    specifier();
-    pointers();
+    int s = specifier();
+    int p = pointers();
+    string name = yytext;
     match(ID);
+    //Type *t;
+    Symbol *symb;
 
     if (lookahead == '[') {
-	match('[');
-	match(NUM);
-	match(']');
-	remainingDeclarators();
+        match('[');
+        match(NUM);
+        match(']');
+        remainingDeclarators();
 
     } else if (lookahead == '(') {
-	match('(');
+        cout<<"in function"<<endl; 
+        match('(');
+        
+        Symbols* params = parameters();
+        Types* types = new Types();
+        if(params == NULL){
+            cout<<"params is null"<<endl;
+        }else{
+            cout<<"params size "<<params->size()<<endl;
+            for(Symbols::size_type i = 0; i < params->size(); i++){
+                Type *t = (*params)[i]->getType();
+                types->push_back(*t);
+            }
+        }
+        
+        //declare the function type
+        Type* func = new Type(s, p, types);
+        symb = new Symbol(*func, name);
+        //insert into the current scope
+        (*currentScope).insert(symb);
+        
+        match(')');
+        if (lookahead == '{') {
+            cout<<"\nfunction definition; creating new scope"<<endl;
+            Scope *functionScope = new Scope(currentScope);
+            cout<<"current scope "<<currentScope<<endl;
+            cout<<"enclsoing scope "<<(*functionScope).enclosing();
+            currentScope = functionScope;
+            if(params == NULL){
+                cout<<"params is null"<<endl;
+            }else{
+                cout<<"params size "<<params->size()<<endl;
+                cout<<"putting function parameters into current scope"<<endl;
+                for(Symbols::size_type i = 0; i < params->size(); i++){
+                    Symbol *s = (*params)[i];
+                    (*currentScope).insert(s);
+                }
+            }
+             //create new scope
+            match('{');
+            
+            declarations();
+            statements();
+            match('}');
+            //close scope
+            cout<<*currentScope<<endl;
+            currentScope = (*currentScope).enclosing();
 
-	parameters();
-	match(')');
-
-	if (lookahead == '{') {
-	    match('{');
-	    declarations();
-	    statements();
-	    match('}');
-
-	} else
-	    remainingDeclarators();
+        } else
+            remainingDeclarators();
 
     } else
-	remainingDeclarators();
+        remainingDeclarators();
 }
 
 
@@ -799,6 +873,8 @@ int main()
 {
     lookahead = yylex();
     cout<<"Open global scope"<<endl;
+    Scope *global = new Scope(0);
+    currentScope = global;
    // cout<<yytext<<endl;
   //  cout<<"lookahead at beginnign: "<<lookahead<<endl;
  //   cout<<"OR: "<<OR<<endl;
@@ -806,6 +882,8 @@ int main()
 
     while (lookahead != DONE)
 	    topLevelDeclaration();
+    cout<<"done parsing"<<endl;
+    cout<<*currentScope<<endl;
 
     cout<<"Close global scope"<<endl;
 

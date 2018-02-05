@@ -9,7 +9,7 @@ typedef std::vector<class Type> Parameters;
 class Type{
     int _specifier;
     unsigned _indirection;
-    enum{ARRAY, SCALAR, FUNCTION, ERROR, DOTS} _kind;
+    enum{ARRAY, SCALAR, FUNCTION, ERROR, ELLIPSIS} _kind;
     unsigned _length;
     Parameters *_parameters;
 public:
