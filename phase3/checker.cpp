@@ -43,7 +43,7 @@ static void checkError(Symbol* symb){
         Type* t = symb->getType();
         //std::cout<<"VOID is "<<VOID<<std::endl;
         //std::cout<<"spec is "<<t->getSpecifier()<<std::endl;
-        if( t->getSpecifier() == VOID && !t->indirection()){
+        if( t->getSpecifier() == VOID && !t->indirection() && !t->isFunction()){
             //E5
             report(voidType, (*symb).getName());
             return;

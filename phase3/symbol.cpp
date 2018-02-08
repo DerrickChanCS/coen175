@@ -42,11 +42,13 @@ std::string Symbol::getName() const{
 std::ostream &operator<<(std::ostream &ostr, const Symbol &s){
     ostr<<*(s.getType());
     ostr<<" "<< s.getName();
-    if(s.getType()->isFunction())
-        if(s.isDefined())
+    if(s.getType()->isFunction()){
+        if(s.isDefined()){
             ostr<<" defined";
-        else
+        } else{
             ostr<<" not defined";
+        }
+    }
     return ostr;
 }
 

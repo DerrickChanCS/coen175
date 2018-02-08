@@ -1,3 +1,4 @@
-g++ -o scc lexmain.cpp lexer.cpp
-./scc < test.txt > out.txt
+make clean
+make
+./scc < test.c 2> out.txt
 cat out.txt

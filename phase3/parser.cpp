@@ -26,25 +26,6 @@ static void statement();
 typedef std::vector<Symbol *> Symbols;
 typedef std::vector<Type> Types;
 
-//returns true if error
-static bool E1(Symbol* symb){
-    Symbol* prev = (*currentScope).find((*symb).getName()); 
-    if( prev == NULL){
-        // If its not in the scope, insert it
-        return false;
-    } else{
-        // If the symbols do not match
-        if( *prev != *symb){
-            cerr << "conflicting types for " << "'" << (*prev).getName() << "'" << endl;
-            return true;
-        }
-    }
-    return false;
-}
-
-static bool E2(Symbol* symb){
-    return false;  
-}
 
 /*
  * Function:	error
