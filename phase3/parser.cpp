@@ -149,7 +149,10 @@ static void declarator(int typespec)
         unsigned len = strtoul(yytext,&ptr,0);
         match(NUM);
         match(']');
-        cout<<"Typespec: "<<typespec<<" Indirection: "<<indirection<<" ID: "<<id<<" length: "<<len<<endl;
+        Type *t = new Type(typespec, indirection, len);
+        Symbol *s = new Symbol(*t, id);
+        checkError(s);
+        //cout<<"Typespec: "<<typespec<<" Indirection: "<<indirection<<" ID: "<<id<<" length: "<<len<<endl;
     } else{
         Type *t = new Type(typespec, indirection);
         Symbol *s = new Symbol(*t, id);
@@ -829,7 +832,7 @@ static void topLevelDeclaration()
     int p = pointers();
     string name = yytext;
     match(ID);
-    cout<<"my name is "<<name<<endl;
+    //cout<<"my name is "<<name<<endl;
     //Type *t;
     Symbol *symb;
 
@@ -933,9 +936,10 @@ static void topLevelDeclaration()
 int main()
 {
     lookahead = yylex();
-    cout<<"Open global scope"<<endl;
-    Scope *global = new Scope(0);
-    currentScope = global;
+    openGlobalScope();
+    //cout<<"Open global scope"<<endl;
+    //Scope *global = new Scope(0);
+    //currentScope = global;
    // cout<<yytext<<endl;
   //  cout<<"lookahead at beginnign: "<<lookahead<<endl;
  //   cout<<"OR: "<<OR<<endl;

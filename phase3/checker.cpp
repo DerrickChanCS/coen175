@@ -9,6 +9,12 @@ std::string redeclaration = "redeclaration of '%s'";
 std::string undeclared    = "'%s' undeclared";
 std::string voidType      = "'%s' has type void";
 
+static void openGlobalScope(){
+    std::cout<<"OPEN GLOBAL"<<std::endl;
+    Scope *global = new Scope(0);
+    currentScope = global;
+}
+
 static void openScope(){
     std::cout<<"OPEN SCOPE"<<std::endl;
     Scope* functionScope = new Scope(currentScope);
@@ -18,6 +24,7 @@ static void openScope(){
 static void closeScope(){
     std::cout<<"CLOSE SCOPE"<<std::endl;
     std::cout<<*currentScope<<std::endl;
+    std::cout<<std::endl;
     currentScope = (*currentScope).enclosing();
 }
 

@@ -1,8 +1,14 @@
-line 5: 'blah' has type void
-line 11: conflicting types for 'main'
-line 14: redeclaration of 'x'
-line 15: redeclaration of 'x'
-line 17: 'i' undeclared
-line 21: 'noEx' undeclared
-line 24: conflicting types for 'main'
-line 28: 'x' has type void
+line 6: 'blah' has type void
+line 13: conflicting types for 'main'
+line 17: redeclaration of 'x'
+line 19: redeclaration of 'x'
+line 31: 'i' undeclared
+line 44: 'noEx' undeclared
+line 48: conflicting types for 'main'
+line 52: 'nonexistant' undeclared
+line 52: 'i' undeclared
+line 62: conflicting types for 'fubar'
+line 69: 'x' has type void
+line 72: redeclaration of 'x'
+line 74: redeclaration of 'x'
+line 77: redeclaration of 'a'
