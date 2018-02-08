@@ -9,7 +9,7 @@ Scope::Scope(Scope *enclosing){
 }
 void Scope::insert(Symbol *s){
     if(find(s->getName()) == 0){
-        std::cout<<"trying to pushback"<<std::endl;
+        //std::cout<<"trying to pushback"<<std::endl;
         _symbols->push_back(s);
     }
 }
@@ -25,13 +25,15 @@ Symbol *Scope::find(const std::string &name) const{
         } 
     }
     //std::cout<<"not found"<<std::endl;
-    return 0;
+    return NULL;
 }
 
 Symbol *Scope::lookup(const string &name) const{
     Symbol *s = find(name);
-    if( s == 0)
+    //if symbol is not found
+    if( s == NULL)
         if( _enclosing != 0)
+            //if there is a parent
             return (_enclosing)->lookup(name);
         else
             return NULL;
@@ -49,6 +51,7 @@ Symbols* Scope::symbols() const{
 
 std::ostream &operator<<(std::ostream &ostr, const Scope& scope){
     Symbols* symb = (scope).symbols();
+    ostr<<"Number of symbols: "<< symb->size() << std::endl;
     for(Symbols::size_type i = 0; i < symb->size(); i++){
         ostr<< *((*symb)[i]->getType())<<" "<<((*symb)[i])->getName();
         if( i != symb->size() -1)

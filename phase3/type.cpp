@@ -52,7 +52,7 @@ Type::Type(const Type &t){
 Type::Type(int ellipsis){
     _specifier = -1;
     _indirection = 0;
-    _kind = DOTS;
+    _kind = ELLIPSIS;
     _length = 0;
     _parameters = new Parameters();
 }
@@ -82,7 +82,7 @@ bool Type::isFunction() const{
 }
 
 bool Type::isEllipsis() const{
-    return _kind==DOTS;
+    return _kind==ELLIPSIS;
 }
 
 unsigned Type::indirection() const{

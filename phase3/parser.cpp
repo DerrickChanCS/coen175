@@ -13,6 +13,7 @@
 # include <string>
 # include "scope.h"
 # include <vector>
+# include "checker.cpp"
 
 using namespace std;
 
@@ -20,11 +21,30 @@ static int lookahead;
 static void expression();
 static void statement();
 
-static Scope* currentScope;
+//static Scope* currentScope;
 
 typedef std::vector<Symbol *> Symbols;
 typedef std::vector<Type> Types;
 
+//returns true if error
+static bool E1(Symbol* symb){
+    Symbol* prev = (*currentScope).find((*symb).getName()); 
+    if( prev == NULL){
+        // If its not in the scope, insert it
+        return false;
+    } else{
+        // If the symbols do not match
+        if( *prev != *symb){
+            cerr << "conflicting types for " << "'" << (*prev).getName() << "'" << endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool E2(Symbol* symb){
+    return false;  
+}
 
 /*
  * Function:	error
@@ -152,8 +172,9 @@ static void declarator(int typespec)
     } else{
         Type *t = new Type(typespec, indirection);
         Symbol *s = new Symbol(*t, id);
-        cout<<"current scope "<<currentScope<<endl;
-        (*currentScope).insert(s);
+        //cout<<"current scope "<<currentScope<<endl;
+        checkError(s);
+        //(*currentScope).insert(s);
         //cout<<"Typespec: "<<typespec<<"Indirection: "<<indirection<<" ID: "<<id<<endl;
     }
 }
@@ -227,39 +248,41 @@ static void declarations()
 static void primaryExpression()
 {
     if (lookahead == '(') {
-	match('(');
-	expression();
-	match(')');
+        match('(');
+        expression();
+        match(')');
 
     } else if (lookahead == CHARACTER) {
-	match(CHARACTER);
+        match(CHARACTER);
 
     } else if (lookahead == STRING) {
-	match(STRING);
+        match(STRING);
 
     } else if (lookahead == NUM) {
-	match(NUM);
+        match(NUM);
 
     } else if (lookahead == ID) {
-	match(ID);
+        string name = yytext;
+	    match(ID);
+        checkDeclaration(name);
 
-	if (lookahead == '(') {
-	    match('(');
+        if (lookahead == '(') {
+            match('(');
 
-	    if (lookahead != ')') {
-		expression();
+            if (lookahead != ')') {
+                expression();
 
-		while (lookahead == ',') {
-		    match(',');
-		    expression();
-		}
+                while (lookahead == ',') {
+                    match(',');
+                    expression();
+                }
+            }
+
+            match(')');
 	    }
 
-	    match(')');
-	}
-
     } else
-	error();
+        error();
 }
 
 
@@ -522,9 +545,9 @@ static void expression()
     logicalAndExpression();
 
     while (lookahead == OR) {
-	match(OR);
-	logicalAndExpression();
-	cout << "or" << endl;
+        match(OR);
+        logicalAndExpression();
+        cout << "or" << endl;
     }
 }
 
@@ -590,10 +613,12 @@ static void assignment()
 static void statement()
 {
     if (lookahead == '{') {
+        openScope();
         match('{');
         declarations();
         statements();
         match('}');
+        closeScope();
 
     } else if (lookahead == BREAK) {
         match(BREAK);
@@ -740,21 +765,47 @@ static Symbols* parameters()
  *		  pointers identifier ( parameters )
  */
 
-static void globalDeclarator()
+static void globalDeclarator(int spec)
 {
-    pointers();
+    int p = pointers();
+    string name = yytext;
     match(ID);
+
+    Symbol *symb;
+    Type* t;
 
     if (lookahead == '[') {
         match('[');
+        int length = atoi(yytext);
         match(NUM);
         match(']');
 
+        t = new Type(spec, p, length);
+        symb = new Symbol(*t, name);
+
     } else if (lookahead == '(') {
         match('(');
-        parameters();
+        Symbols* params = parameters();
+        Types* types = new Types();
+        if(params == NULL){
+            //params is null
+        }else{
+            // extracts the types from the symbols
+            for(Symbols::size_type i = 0; i < params->size(); i++){
+                Type *t = (*params)[i]->getType();
+                types->push_back(*t);
+            }
+        }
+        t = new Type(spec, p, types);
+        symb = new Symbol(*t, name);
         match(')');
+
+    } else{
+        t = new Type(spec, p);
+        symb = new Symbol(*t, name);
     }
+    
+    checkError(symb);
 }
 
 
@@ -768,11 +819,11 @@ static void globalDeclarator()
  * 		  , global-declarator remaining-declarators
  */
 
-static void remainingDeclarators()
+static void remainingDeclarators(int spec)
 {
     while (lookahead == ',') {
-	match(',');
-	globalDeclarator();
+        match(',');
+        globalDeclarator(spec);
     }
 
     match(';');
@@ -797,25 +848,38 @@ static void topLevelDeclaration()
     int p = pointers();
     string name = yytext;
     match(ID);
+    cout<<"my name is "<<name<<endl;
     //Type *t;
     Symbol *symb;
 
     if (lookahead == '[') {
         match('[');
+        int length = atoi(yytext);
         match(NUM);
         match(']');
-        remainingDeclarators();
+    
+        //make a global array
+        Type* t = new Type(s, p, length);
+        Symbol* symb = new Symbol(*t, name);
+        
+        //insert global array into the current scope
+        checkError(symb);
+        //(*currentScope).insert(symb);
+
+        remainingDeclarators(s);
 
     } else if (lookahead == '(') {
-        cout<<"in function"<<endl; 
+        //cout<<"in function"<<endl; 
         match('(');
-        
+        //get the parameters from the function 
         Symbols* params = parameters();
         Types* types = new Types();
         if(params == NULL){
-            cout<<"params is null"<<endl;
+            //cout<<"params is null"<<endl;
         }else{
-            cout<<"params size "<<params->size()<<endl;
+            //cout<<"params size "<<params->size()<<endl;
+            // push the types into vector
+            // vector of types used for function definition
             for(Symbols::size_type i = 0; i < params->size(); i++){
                 Type *t = (*params)[i]->getType();
                 types->push_back(*t);
@@ -826,23 +890,32 @@ static void topLevelDeclaration()
         Type* func = new Type(s, p, types);
         symb = new Symbol(*func, name);
         //insert into the current scope
-        (*currentScope).insert(symb);
+        checkError(symb);
+        //if(!E1(symb))
+        //    (*currentScope).insert(symb);
         
         match(')');
         if (lookahead == '{') {
+            /*
             cout<<"\nfunction definition; creating new scope"<<endl;
             Scope *functionScope = new Scope(currentScope);
             cout<<"current scope "<<currentScope<<endl;
             cout<<"enclsoing scope "<<(*functionScope).enclosing();
             currentScope = functionScope;
+            */
+            //open the scope and set defined = true
+            openScope();
+            setDefined(name);
             if(params == NULL){
-                cout<<"params is null"<<endl;
+                //cout<<"params is null"<<endl;
             }else{
-                cout<<"params size "<<params->size()<<endl;
-                cout<<"putting function parameters into current scope"<<endl;
+                //cout<<"params size "<<params->size()<<endl;
+                //cout<<"putting function parameters into current scope"<<endl;
                 for(Symbols::size_type i = 0; i < params->size(); i++){
+                    //iterate through parameters
                     Symbol *s = (*params)[i];
-                    (*currentScope).insert(s);
+                    checkError(s);
+                    //(*currentScope).insert(s);
                 }
             }
              //create new scope
@@ -852,14 +925,21 @@ static void topLevelDeclaration()
             statements();
             match('}');
             //close scope
+            closeScope();
+            /*
             cout<<*currentScope<<endl;
             currentScope = (*currentScope).enclosing();
+            */
 
         } else
-            remainingDeclarators();
+            remainingDeclarators(s);
 
-    } else
-        remainingDeclarators();
+    } else{
+        Type* t = new Type(s, p);
+        Symbol* symb = new Symbol(*t, name);
+        checkError(symb);
+        remainingDeclarators(s);
+    }
 }
 
 

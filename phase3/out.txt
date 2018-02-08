@@ -1,1 +1,4 @@
-Open global scope
+line 9: conflicting types for 'main'
+line 12: redeclaration of 'x'
+line 13: redeclaration of 'x'
+line 15: 'i' undeclared

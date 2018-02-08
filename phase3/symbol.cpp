@@ -22,13 +22,13 @@ Symbol::Symbol(const Type &t, std::string name, bool def){
 Symbol::Symbol(const Type &t, const char* name, bool def){
     _type = new Type(t);
     _name = name;
-    isDefined = def;
+    defined = def;
 }
 
 Symbol::Symbol(const Symbol &t){
     _type = new Type(*(t.getType()));
     _name = t.getName();
-    isDefined = t.isDefined;
+    defined = t.defined;
 }
 
 Type* Symbol::getType() const{
@@ -42,6 +42,11 @@ std::string Symbol::getName() const{
 std::ostream &operator<<(std::ostream &ostr, const Symbol &s){
     ostr<<*(s.getType());
     ostr<<" "<< s.getName();
+    if(s.getType()->isFunction())
+        if(s.isDefined())
+            ostr<<" defined";
+        else
+            ostr<<" not defined";
     return ostr;
 }
 
