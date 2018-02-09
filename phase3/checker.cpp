@@ -51,6 +51,10 @@ static void checkDeclaration(std::string name){
 
 static void checkError(Symbol* symb){
     Symbol* temp = (*currentScope).find((*symb).getName());
+    if( temp != NULL){
+        std::cout<<*temp<<std::endl;
+        std::cout<<*symb<<std::endl;
+    }
     if( temp == NULL){
         Type* t = symb->getType();
         //std::cout<<"VOID is "<<VOID<<std::endl;
@@ -73,7 +77,9 @@ static void checkError(Symbol* symb){
         //If the types do not match
         // E1
         report(conflicting, symb->getName());
-    } else if( symb->getType()->isFunction() && symb->isDefined()){
+    } else if( symb->getType()->isFunction() && temp->isDefined()){
+        // check if temp is defined because 
+        // Symbol may or may not have been declared
         // E2
         report(redefinition, symb->getName());
     }

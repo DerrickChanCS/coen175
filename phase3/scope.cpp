@@ -53,7 +53,8 @@ std::ostream &operator<<(std::ostream &ostr, const Scope& scope){
     Symbols* symb = (scope).symbols();
     ostr<<"Number of symbols: "<< symb->size() << std::endl;
     for(Symbols::size_type i = 0; i < symb->size(); i++){
-        ostr<<"\t"<< *((*symb)[i]->getType())<<" "<<((*symb)[i])->getName();
+        ostr<<"\t"<<*(*symb)[i];
+        //ostr<<"\t"<< *((*symb)[i]->getType())<<" "<<((*symb)[i])->getName();
         if( i != symb->size() -1)
             ostr<<std::endl;
     }

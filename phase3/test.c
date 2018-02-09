@@ -6,6 +6,17 @@ int main(int x);
 /* Note, this blah should be added to symbol table */
 void blah;
 
+/* error type void */
+void testvar;
+/* conflicting types */
+int testvar;
+
+int qywe(int x);
+/* conflicting type */
+int qywe(char x){}
+/* redefinition */
+int qywe(int x){}
+
 /* These declartions okay b/c types match */
 int fib(int x, int y);
 int fib(int z, int x);
@@ -93,3 +104,32 @@ void blah(void){
 
 /* conflicting types for fb */
 void fb(char y){}
+
+int **iop;
+int **iop;
+/* conflicting types */
+int ***iop;
+
+/* vbn has type void */
+void vbn;
+/* conflicting types for vbn */
+void vbn;
+
+/* no error for void functions */
+void* vm;
+void* zx[10];
+
+void asdf(void){
+    /* a has type void */
+    void a;
+    /* redeclaration of 'a' */
+    void a;
+}
+
+void hjk(void){
+    int a;
+    int **b;
+    /* redecl of b */
+    int **b;
+    
+}
