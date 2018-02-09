@@ -29,7 +29,12 @@ static void closeScope(){
 }
 
 static void setDefined(std::string name){
-    currentScope->lookup(name)->setDefine(true);
+    Symbol *s = currentScope->find(name);
+    if(s->isDefined()){
+        report(redefinition, name);
+    } else{
+        currentScope->find(name)->setDefine(true);
+    }
 }
 
 static void checkDeclaration(std::string name){

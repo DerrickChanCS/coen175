@@ -875,11 +875,10 @@ static void topLevelDeclaration()
         symb = new Symbol(*func, name);
         //insert into the current scope
         checkError(symb);
-        //if(!E1(symb))
-        //    (*currentScope).insert(symb);
         
         match(')');
         if (lookahead == '{') {
+            
             /*
             cout<<"\nfunction definition; creating new scope"<<endl;
             Scope *functionScope = new Scope(currentScope);
@@ -888,8 +887,8 @@ static void topLevelDeclaration()
             currentScope = functionScope;
             */
             //open the scope and set defined = true
-            openScope();
             setDefined(name);
+            openScope();
             if(params == NULL){
                 //cout<<"params is null"<<endl;
             }else{
@@ -897,6 +896,7 @@ static void topLevelDeclaration()
                 //cout<<"putting function parameters into current scope"<<endl;
                 for(Symbols::size_type i = 0; i < params->size(); i++){
                     //iterate through parameters
+                    // add symbols to the function scope
                     Symbol *s = (*params)[i];
                     checkError(s);
                     //(*currentScope).insert(s);
