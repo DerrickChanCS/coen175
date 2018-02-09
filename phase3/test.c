@@ -3,8 +3,10 @@ int z;
 int a[10];
 int main(int x);
 /* Error type void */
+/* Note, this blah should be added to symbol table */
 void blah;
 
+/* These declartions okay b/c types match */
 int fib(int x, int y);
 int fib(int z, int x);
 int fb(int x, ...);
@@ -63,6 +65,9 @@ void fubar(char x, ...){
     return 0;
 }   
 
+/* Throws redefinition */
+void fubar(int x, ...){}
+
 /*check that x is parsed*/
 void blah(void){
     /* x has type void */
@@ -80,3 +85,11 @@ void blah(void){
     void* y;
     void* d[10];
 }
+
+/* redeclration of function */
+void blah(void){
+    
+}
+
+/* conflicting types for fb */
+void fb(char y){}

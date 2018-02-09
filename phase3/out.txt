@@ -1,2 +1,18 @@
-line 15: redeclaration of 'x'
-line 18: redefinition of 'funcTest'
+line 7: 'blah' has type void
+line 15: conflicting types for 'main'
+line 19: redeclaration of 'x'
+line 21: redeclaration of 'x'
+line 33: 'i' undeclared
+line 46: 'noEx' undeclared
+line 50: conflicting types for 'main'
+line 54: 'nonexistant' undeclared
+line 54: 'i' undeclared
+line 64: conflicting types for 'fubar'
+line 72: conflicting types for 'blah'
+line 74: 'x' has type void
+line 75: redeclaration of 'x'
+line 77: redeclaration of 'x'
+line 79: redeclaration of 'x'
+line 82: redeclaration of 'a'
+line 90: conflicting types for 'blah'
+line 95: conflicting types for 'fb'

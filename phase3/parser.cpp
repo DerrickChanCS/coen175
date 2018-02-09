@@ -879,13 +879,6 @@ static void topLevelDeclaration()
         match(')');
         if (lookahead == '{') {
             
-            /*
-            cout<<"\nfunction definition; creating new scope"<<endl;
-            Scope *functionScope = new Scope(currentScope);
-            cout<<"current scope "<<currentScope<<endl;
-            cout<<"enclsoing scope "<<(*functionScope).enclosing();
-            currentScope = functionScope;
-            */
             //open the scope and set defined = true
             setDefined(name);
             openScope();

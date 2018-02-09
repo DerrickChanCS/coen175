@@ -31,7 +31,7 @@ static void closeScope(){
 static void setDefined(std::string name){
     Symbol *s = currentScope->find(name);
     if(s->isDefined()){
-        report(redefinition, name);
+        //report(redefinition, name);
     } else{
         currentScope->find(name)->setDefine(true);
     }
@@ -58,6 +58,9 @@ static void checkError(Symbol* symb){
         if( t->getSpecifier() == VOID && !t->indirection() && !t->isFunction()){
             //E5
             report(voidType, (*symb).getName());
+            Type* t = new Type();
+            Symbol* s = new Symbol(*t, symb->getName());
+            currentScope->insert(s);
             return;
         }
         std::cout<<"inserting "<< symb->getName()<<std::endl;
