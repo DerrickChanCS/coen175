@@ -667,6 +667,7 @@ static Symbol* parameter()
     std::string name = yytext;
     match(ID);
     Type *t = new Type(s,p);
+    //cout<<"in param returning: "<<*t<<" and name "<<name<<endl;
     //(*currentScope)->insert(new Symbol(*t,name));
     //return *t;
     return new Symbol(*t, name);
@@ -698,10 +699,11 @@ static Symbols* parameters()
     Symbols* functionSymbols = new Symbols();
     if (lookahead == VOID) {
 	    match(VOID);
+        s = VOID;
 
-	if (lookahead == ')')
-        //if the function has void params return empty symbol vector
-	    return functionSymbols;
+        if (lookahead == ')')
+            //if the function has void params return empty symbol vector
+            return functionSymbols;
     } else
 	    s = specifier();
 
@@ -711,6 +713,8 @@ static Symbols* parameters()
     
     Type *t = new Type(s,p);
     Symbol* temp = new Symbol(*t, name);
+    //cout<<"in the parameters"<<endl;
+    //cout<<"returning "<<*temp<<endl;
     
     //params->push_back(t);
     functionSymbols->push_back(temp);
@@ -732,6 +736,7 @@ static Symbols* parameters()
         functionSymbols->push_back(parameter());
        // params->push_back(parameter());
     }
+    //cout<<"number returning: "<<functionSymbols->size()<<endl;
     return functionSymbols;
 }
 
@@ -773,16 +778,20 @@ static void globalDeclarator(int spec)
         Types* types = new Types();
         if(params == NULL){
             //params is null
+            cout<<"params null"<<endl;
         }else{
             // extracts the types from the symbols
+            //cout<<"before for"<<endl;
             for(Symbols::size_type i = 0; i < params->size(); i++){
                 Type *t = (*params)[i]->getType();
+                //cout<<"param types push back: "<<*t<<endl;
                 types->push_back(*t);
             }
         }
         t = new Type(spec, p, types);
         symb = new Symbol(*t, name);
         match(')');
+        //cout<<"match paren"<<endl;
 
     } else{
         t = new Type(spec, p);
@@ -860,23 +869,33 @@ static void topLevelDeclaration()
         Types* types = new Types();
         if(params == NULL){
             //cout<<"params is null"<<endl;
+            //cout<<"top level params null"<<endl;
         }else{
             //cout<<"params size "<<params->size()<<endl;
             // push the types into vector
             // vector of types used for function definition
+            //cout<<"in top level for loop"<<endl;
             for(Symbols::size_type i = 0; i < params->size(); i++){
                 Type *t = (*params)[i]->getType();
+                //cout<<"aaaaaaa "<<*t<<endl;
                 types->push_back(*t);
+                checkParam((*params)[i]);
             }
         }
         
         //declare the function type
         Type* func = new Type(s, p, types);
+        cout<<"top level func: "<<*func<<endl;
         symb = new Symbol(*func, name);
         //insert into the current scope
-        checkError(symb);
+        //checkError(symb);
         
         match(')');
+        if (lookahead == ';'){
+            checkFunc(symb);
+        } else{
+            checkError(symb);
+        }
         if (lookahead == '{') {
             
             //open the scope and set defined = true

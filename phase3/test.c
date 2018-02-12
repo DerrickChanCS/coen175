@@ -79,10 +79,11 @@ void fubar(char x, ...){
 /* Throws redefinition */
 void fubar(int x, ...){}
 
-/*check that x is parsed*/
+/* conflicting types */
 void blah(void){
     /* x has type void */
     void x;
+    /* redecl */
     int x;
     /* redecl */
     int x;
@@ -97,7 +98,7 @@ void blah(void){
     void* d[10];
 }
 
-/* redeclration of function */
+/* conflicting types */
 void blah(void){
     
 }
@@ -133,3 +134,10 @@ void hjk(void){
     int **b;
     
 }
+
+void zxc(void);
+void zxc(void);
+void zxc(void);
+void zxc(void){}
+void zxc(void);
+void zxc(void);

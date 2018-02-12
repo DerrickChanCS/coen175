@@ -1,0 +1,261 @@
+OPEN GLOBAL
+inserting z
+int z
+int z
+inserting a
+top level func: int(int)
+inserting main
+error testvar
+int testvar
+top level func: int(int)
+inserting qywe
+top level func: int(char)
+int(int) qywe not defined
+int(char) qywe not defined
+OPEN SCOPE
+inserting x
+CLOSE SCOPE
+Number of symbols: 1
+	char x
+
+top level func: int(int)
+int(int) qywe defined
+int(int) qywe not defined
+special int(int) qywe not defined
+special int(int) qywe defined
+OPEN SCOPE
+inserting x
+CLOSE SCOPE
+Number of symbols: 1
+	int x
+
+top level func: int(int,int)
+inserting fib
+top level func: int(int,int)
+top level func: int(int,...)
+inserting fb
+top level func: int(void)
+int(int) main not defined
+int(void) main not defined
+OPEN SCOPE
+inserting x
+inserting y
+int x
+void x
+int x
+char x
+OPEN SCOPE
+inserting x
+CLOSE SCOPE
+Number of symbols: 1
+	int x
+
+OPEN SCOPE
+check decl x
+check decl x
+check decl y
+add
+CLOSE SCOPE
+Number of symbols: 0
+
+
+check decl i
+check decl i
+ltn
+check decl i
+check decl i
+add
+OPEN SCOPE
+inserting blah
+check decl x
+add
+CLOSE SCOPE
+Number of symbols: 1
+	int blah
+
+OPEN SCOPE
+inserting inner
+OPEN SCOPE
+inserting nextInner
+CLOSE SCOPE
+Number of symbols: 1
+	int nextInner
+
+OPEN SCOPE
+inserting mostInner
+CLOSE SCOPE
+Number of symbols: 1
+	int mostInner
+
+CLOSE SCOPE
+Number of symbols: 1
+	int inner
+
+check decl noEx
+check decl x
+CLOSE SCOPE
+Number of symbols: 4
+	int x
+	char y
+	error i
+	error noEx
+
+top level func: int(void)
+int(int) main defined
+int(void) main not defined
+OPEN SCOPE
+inserting testVar
+check decl testVar
+check decl nonexistant
+check decl i
+index
+check decl testVar
+CLOSE SCOPE
+Number of symbols: 3
+	int testVar
+	error nonexistant
+	error i
+
+top level func: int(int,...)
+int(int,...) fb not defined
+int(int,...) fb not defined
+OPEN SCOPE
+inserting nodecl
+inserting 
+CLOSE SCOPE
+Number of symbols: 2
+	int nodecl
+	... 
+
+top level func: void(int,...)
+inserting fubar
+top level func: void(char,...)
+void(int,...) fubar not defined
+void(char,...) fubar not defined
+OPEN SCOPE
+inserting x
+inserting 
+CLOSE SCOPE
+Number of symbols: 2
+	char x
+	... 
+
+top level func: void(int,...)
+void(int,...) fubar defined
+void(int,...) fubar not defined
+special void(int,...) fubar not defined
+special void(int,...) fubar defined
+OPEN SCOPE
+inserting x
+inserting 
+CLOSE SCOPE
+Number of symbols: 2
+	int x
+	... 
+
+top level func: void(void)
+error blah
+void(void) blah not defined
+OPEN SCOPE
+error x
+int x
+error x
+int x
+error x
+void x
+inserting a
+int * a
+int[10] a
+inserting b
+inserting c
+inserting y
+inserting d
+CLOSE SCOPE
+Number of symbols: 6
+	error x
+	int * a
+	int[10] b
+	int[50] *********** c
+	void * y
+	void[10] * d
+
+top level func: void(void)
+error blah
+void(void) blah not defined
+OPEN SCOPE
+CLOSE SCOPE
+Number of symbols: 0
+
+
+top level func: void(char)
+int(int,...) fb defined
+void(char) fb not defined
+OPEN SCOPE
+inserting y
+CLOSE SCOPE
+Number of symbols: 1
+	char y
+
+inserting iop
+int ** iop
+int ** iop
+int ** iop
+int *** iop
+error vbn
+void vbn
+inserting vm
+inserting zx
+top level func: void(void)
+inserting asdf
+OPEN SCOPE
+error a
+void a
+CLOSE SCOPE
+Number of symbols: 1
+	error a
+
+top level func: void(void)
+inserting hjk
+OPEN SCOPE
+inserting a
+inserting b
+int ** b
+int ** b
+CLOSE SCOPE
+Number of symbols: 2
+	int a
+	int ** b
+
+top level func: void(void)
+inserting zxc
+top level func: void(void)
+top level func: void(void)
+top level func: void(void)
+void(void) zxc not defined
+void(void) zxc not defined
+OPEN SCOPE
+CLOSE SCOPE
+Number of symbols: 0
+
+
+top level func: void(void)
+top level func: void(void)
+done parsing
+Number of symbols: 16
+	int z
+	int[10] a
+	int(int) main defined
+	error blah
+	error testvar
+	int(int) qywe defined
+	int(int,int) fib not defined
+	int(int,...) fb defined
+	void(int,...) fubar defined
+	int ** iop
+	error vbn
+	void * vm
+	void[10] * zx
+	void(void) asdf defined
+	void(void) hjk defined
+	void(void) zxc defined
+Close global scope

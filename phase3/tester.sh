@@ -1,12 +1,12 @@
+make clean
 make
-g++ -o scc lexer.cpp lexmain.cpp
 
 arrc=(./examples/*.c)
-arrout=(./examples/*.out)
+arrout=(./examples/*.err)
 
 for ((i=0; i<${#arrc[@]}; i++)); do
     echo "TESTING: ${arrc[$i]}"
-    ./scc < ${arrc[$i]} > temp.txt  && diff ${arrout[$i]} temp.txt
+    ./scc < ${arrc[$i]} > cout 2> temp.txt  && diff ${arrout[$i]} temp.txt
 done
 
 tar cvf ../phase2.tar .

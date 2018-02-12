@@ -1,4 +1,4 @@
 make clean
 make
-./scc < test.c 2> out.txt
-cat out.txt
+./scc < test.c >cout.txt 2> cerr.txt
+cat cerr.txt

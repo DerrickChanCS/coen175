@@ -32,4 +32,32 @@ int main(void){
     cout<<"test addr "<<*func<<endl;
     cout<<*func<<endl;
     cout<<*tarray<<endl;
+
+
+    Parameters *tp = new Parameters();
+    Parameters *tp1 = new Parameters();
+
+    Type* p1 = new Type(INT, 0);
+    Type* p2 = new Type(INT, 0);
+    Type* p3 = new Type(ELLIPSIS);
+    tp->push_back(*p1);
+    tp->push_back(*p2);
+    tp->push_back(*p3);
+    
+
+    Type* p4 = new Type(INT, 0);
+    Type* p5 = new Type(INT, 0);
+    Type* p6 = new Type(ELLIPSIS);
+    tp1->push_back(*p4);
+    tp1->push_back(*p5);
+    tp1->push_back(*p6);
+
+    Type* f1 = new Type(INT, 0, tp);
+    Type* f2 = new Type(INT, 0, tp1);
+    cout<<*f1<<endl;
+    cout<<*f2<<endl;
+    if(*f1 == *f2)
+        cout<<"blah"<<endl;
+    //cout<< *f1 == *f2 <<endl;
+
 }

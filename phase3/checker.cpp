@@ -80,7 +80,40 @@ static void checkError(Symbol* symb){
     } else if( symb->getType()->isFunction() && temp->isDefined()){
         // check if temp is defined because 
         // Symbol may or may not have been declared
+       
+        // Need this check to ensure that a declaration after a definition
+        // does not falsely throw an error
+        std::cout<<"special "<<*symb<<std::endl;
+        std::cout<<"special "<<*temp<<std::endl;
+        /*if(!symb->isDefined() && *(symb->getType()) == *(temp->getType())){
+            return;
+        }
+        */
         // E2
         report(redefinition, symb->getName());
+    }
+}
+
+static void checkParam(Symbol* symb){
+    Type* t = symb->getType();
+    if( t->getSpecifier() == VOID && !t->indirection() && !t->isFunction()){
+        //E5
+        report(voidType, (*symb).getName());
+        return;
+    }
+}
+
+static void checkFunc(Symbol* symb){
+    Symbol* temp = currentScope->find(symb->getName());
+    if(temp == NULL){
+        checkError(symb);
+        return;
+    }
+
+    Type* t = symb->getType();
+    if(*(temp->getType()) != *t){
+        //E5
+        report(conflicting, (*symb).getName());
+        return;
     }
 }

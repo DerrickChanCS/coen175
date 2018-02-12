@@ -1,0 +1,29 @@
+line 7: 'blah' has type void
+line 10: 'testvar' has type void
+line 12: conflicting types for 'testvar'
+line 16: conflicting types for 'qywe'
+line 18: redefinition of 'qywe'
+line 26: conflicting types for 'main'
+line 30: redeclaration of 'x'
+line 32: redeclaration of 'x'
+line 44: 'i' undeclared
+line 57: 'noEx' undeclared
+line 61: conflicting types for 'main'
+line 65: 'nonexistant' undeclared
+line 65: 'i' undeclared
+line 75: conflicting types for 'fubar'
+line 80: redefinition of 'fubar'
+line 83: conflicting types for 'blah'
+line 85: 'x' has type void
+line 87: redeclaration of 'x'
+line 89: redeclaration of 'x'
+line 91: redeclaration of 'x'
+line 94: redeclaration of 'a'
+line 102: conflicting types for 'blah'
+line 107: conflicting types for 'fb'
+line 112: conflicting types for 'iop'
+line 115: 'vbn' has type void
+line 117: conflicting types for 'vbn'
+line 125: 'a' has type void
+line 127: redeclaration of 'a'
+line 134: redeclaration of 'b'

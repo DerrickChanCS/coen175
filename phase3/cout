@@ -1,0 +1,22 @@
+OPEN GLOBAL
+top level func: void(void)
+inserting f
+OPEN SCOPE
+CLOSE SCOPE
+Number of symbols: 0
+
+
+top level func: void(void)
+inserting g
+top level func: void *(void)
+inserting h
+inserting b
+done parsing
+Number of symbols: 6
+	void(void) f defined
+	error x
+	void(void) g not defined
+	void *(void) h not defined
+	error a
+	void[10] * b
+Close global scope
