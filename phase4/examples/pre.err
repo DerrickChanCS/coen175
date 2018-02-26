@@ -1,0 +1,14 @@
+line 29: invalid operand to unary !
+line 40: invalid operand to unary -
+line 42: invalid operand to unary -
+line 45: invalid operand to unary -
+line 47: invalid operand to unary -
+line 52: invalid operand to unary sizeof
+line 53: invalid operand to unary sizeof
+line 63: invalid operands to binary =
+line 65: lvalue required in expression
+line 66: lvalue required in expression
+line 67: lvalue required in expression
+line 68: lvalue required in expression
+line 78: invalid operands to binary =
+line 79: invalid operand to unary *
